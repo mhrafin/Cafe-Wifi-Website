@@ -1,2 +1,4 @@
 .venv
 *.code-workspace
+ruff.toml
+__pycache__
