@@ -1,0 +1,86 @@
+{% extends "base.html" %} {% macro show_errors(field) %} {% for err in
+field.errors %} {% if request.method == 'POST' %}
+<span style="color: rgb(177, 0, 59)">{{err}}</span>
+{% endif %} {% endfor %} {% endmacro %} {% block content %}
+<div class="container my-5">
+  <div
+    class="p-5 text-center rounded-3 bg-image"
+    style="
+        background-image: url('{{ url_for('static', filename='assets/img/add-cafe-bg.jpg')}}');
+        height: 15vh;"
+  >
+    <div class="mask" style="background-color: rgba(219, 213, 189, 0.8)">
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <h1 class="text-black mb-0 display-1">Add New Cafe</h1>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-sm">
+  <div class="row justify-content-center">
+    <div class="col-4">
+      <form method="post" action="" novalidate>
+        {{form.csrf_token}}
+        <div data-mdb-input-init class="form-outline mb-4">
+          {{ form.name(id="name", class="form-control") }} {{
+          form.name.label(class="form-label", for="name") }}
+          {{ show_errors(form.name) }}
+        </div>
+
+        <div data-mdb-input-init class="form-outline mb-4">
+          {{ form.map_url(id="map_url", class="form-control") }} {{
+          form.map_url.label(class="form-label", for="map_url") }}
+          {{ show_errors(form.map_url) }}
+        </div>
+        <div data-mdb-input-init class="form-outline mb-4">
+          {{ form.img_url(id="img_url", class="form-control") }} {{
+          form.img_url.label(class="form-label", for="img_url") }}
+          {{ show_errors(form.img_url) }}
+        </div>
+        <div data-mdb-input-init class="form-outline mb-4">
+          {{ form.location(id="location", class="form-control") }} {{
+          form.location.label(class="form-label", for="location") }}
+          {{ show_errors(form.location) }}
+        </div>
+        <div data-mdb-input-init class="form-check mb-4">
+          {{ form.has_sockets(id="has_sockets", class="form-check-input") }} {{
+          form.has_sockets.label(class="form-check-label", for="has_sockets") }}
+          {{ show_errors(form.has_sockets) }}
+        </div>
+        <div data-mdb-input-init class="form-check mb-4">
+          {{ form.has_toilet(id="has_toilet", class="form-check-input") }} {{
+          form.has_toilet.label(class="form-check-label", for="has_toilet") }}
+          {{ show_errors(form.has_toilet) }}
+        </div>
+        <div data-mdb-input-init class="form-check mb-4">
+          {{ form.has_wifi(id="has_wifi", class="form-check-input") }} {{
+          form.has_wifi.label(class="form-check-label", for="has_wifi") }}
+          {{ show_errors(form.has_wifi) }}
+        </div>
+        <div data-mdb-input-init class="form-check mb-4">
+          {{ form.can_take_calls(id="can_take_calls", class="form-check-input")
+          }} {{ form.can_take_calls.label(class="form-check-label",
+          for="can_take_calls") }}
+          {{ show_errors(form.can_take_calls) }}
+        </div>
+        <div data-mdb-input-init class="form-outline mb-4">
+          {{ form.seats(id="seats", class="form-control") }} {{
+          form.seats.label(class="form-label", for="seats") }}
+          {{ show_errors(form.seats) }}
+        </div>
+        <div data-mdb-input-init class="form-outline mb-4">
+          {{ form.coffee_price(id="coffee_price", class="form-control") }} {{
+          form.coffee_price.label(class="form-label", for="coffee_price") }}
+          {{ show_errors(form.coffee_price) }}
+        </div>
+
+        <!-- Submit button -->
+        <!-- <button data-mdb-ripple-init class="btn btn-primary btn-block">
+          Sign in
+        </button> -->
+        {{form.submit(class="btn btn-primary btn-block")}}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
