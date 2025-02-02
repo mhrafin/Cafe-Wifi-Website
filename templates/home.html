@@ -20,6 +20,7 @@
 <hr />
 <div class="container my-5">
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    {% for cafe in cafes %}
     <div class="col">
       <div class="card h-100">
         <img
@@ -28,59 +29,35 @@
           alt="Hollywood Sign on The Hill"
         />
         <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural
-            lead-in to additional content. This content is a little bit longer.
-          </p>
+          <h5 class="card-title">{{ cafe.name }}</h5>
+          <p class="card-text">{{ cafe.short_description }}</p>
+
+          <a href="{{ url_for('add_cafe') }}"
+            ><button
+              type="button"
+              class="btn btn-outline-dark btn-lg"
+              data-mdb-ripple-init
+              data-mdb-ripple-color="dark"
+            >
+              Details
+            </button></a
+          >
         </div>
       </div>
     </div>
-    <div class="col">
-      <div class="card h-100">
-        <img
-          src="https://mdbcdn.b-cdn.net/img/new/standard/city/042.webp"
-          class="card-img-top"
-          alt="Palm Springs Road"
-        />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">This is a short card.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card h-100">
-        <img
-          src="https://mdbcdn.b-cdn.net/img/new/standard/city/043.webp"
-          class="card-img-top"
-          alt="Los Angeles Skyscrapers"
-        />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural
-            lead-in to additional content.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card h-100">
-        <img
-          src="https://mdbcdn.b-cdn.net/img/new/standard/city/044.webp"
-          class="card-img-top"
-          alt="Skyscrapers"
-        />
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural
-            lead-in to additional content. This content is a little bit longer.
-          </p>
-        </div>
-      </div>
-    </div>
+    {% endfor %}
+  </div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a href="{{ url_for('add_cafe') }}"
+      ><button
+        type="button"
+        class="btn btn-outline-dark btn-lg"
+        data-mdb-ripple-init
+        data-mdb-ripple-color="dark"
+      >
+        Add New Cafe
+      </button></a
+    >
   </div>
 </div>
 {% endblock content%}

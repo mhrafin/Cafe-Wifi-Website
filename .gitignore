@@ -2,3 +2,4 @@
 *.code-workspace
 ruff.toml
 __pycache__
+*.db
