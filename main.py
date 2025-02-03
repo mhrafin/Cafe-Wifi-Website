@@ -48,8 +48,10 @@ class Cafe(db.Model):
     seats: Mapped[int] = mapped_column(Integer, nullable=False)
     coffee_price: Mapped[float] = mapped_column(Float, nullable=False)
 
+
 with app.app_context():
     db.create_all()
+
 
 # Forms
 class CafeForm(FlaskForm):
@@ -78,7 +80,7 @@ def add_cafe():
     form = CafeForm()
     print("Validate on submit:", form.validate_on_submit())
     if form.validate_on_submit():
-        new_cafe =  Cafe()
+        new_cafe = Cafe()
         new_cafe.name = form.data.get("name")
         new_cafe.short_description = form.data.get("short_description")
         new_cafe.map_url = form.data.get("map_url")
@@ -102,6 +104,24 @@ def add_cafe():
 def edit_cafe(id):
     cafe = db.session.execute(db.select(Cafe).where(Cafe.id == id)).scalar()
     form = CafeForm()
+
+    print("Validate on submit:", form.validate_on_submit())
+    if form.validate_on_submit():
+        cafe.name = form.data.get("name")
+        cafe.short_description = form.data.get("short_description")
+        cafe.map_url = form.data.get("map_url")
+        cafe.img_url = form.data.get("img_url")
+        cafe.location = form.data.get("location")
+        cafe.has_sockets = form.data.get("has_sockets")
+        cafe.has_toilet = form.data.get("has_toilet")
+        cafe.has_wifi = form.data.get("has_wifi")
+        cafe.can_take_calls = form.data.get("can_take_calls")
+        cafe.seats = form.data.get("seats")
+        cafe.coffee_price = form.data.get("coffee_price")
+
+        db.session.commit()
+        return redirect(f"/view-cafe/{id}")
+
     form.name.data = cafe.name
     form.short_description.data = cafe.short_description
     form.map_url.data = cafe.map_url
