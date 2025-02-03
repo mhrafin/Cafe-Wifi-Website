@@ -1,0 +1,111 @@
+{% extends "base.html" %} {% block content %}
+<div class="container my-5">
+  <div
+    class="p-5 text-center rounded-3 bg-image"
+    style="
+          background-image: url('{{cafe.img_url}}');
+          height: 15vh;"
+  >
+    <div class="mask" style="background-color: rgba(219, 213, 189, 0.8)">
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <h1 class="text-black mb-0 display-1">{{ cafe.name }}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="card mb-3">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img
+          src="{{cafe.img_url}}"
+          alt="Trendy Pants and Shoes"
+          class="img-fluid rounded-start"
+        />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title text-center">{{ cafe.name }}</h5>
+          <p class="card-text">{{ cafe.short_description }}</p>
+
+          <table class="table table-borderless w-auto">
+            <tr>
+              <td>Location</td>
+              <td>-</td>
+              <td><a href="{{ cafe.map_url }}">{{cafe.location}}</a></td>
+            </tr>
+            <tr>
+              <td>Has Sockets</td>
+              <td>-</td>
+              <td>
+                {% if cafe.has_sockets %}<i class="fas fa-check"></i>{% else
+                %}<i class="fas fa-xmark"></i>{% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Has Toilet</td>
+              <td>-</td>
+              <td>
+                {% if cafe.has_toilet %}<i class="fas fa-check"></i>{% else %}<i
+                  class="fas fa-xmark"
+                ></i
+                >{% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Has Wifi</td>
+              <td>-</td>
+              <td>
+                {% if cafe.has_wifi %}<i class="fas fa-check"></i>{% else %}<i
+                  class="fas fa-xmark"
+                ></i
+                >{% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Can Take Calls</td>
+              <td>-</td>
+              <td>
+                {% if cafe.can_take_calls %}<i class="fas fa-check"></i>{% else
+                %}<i class="fas fa-xmark"></i>{% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Seats</td>
+              <td>-</td>
+              <td>{{ cafe.seats }}</td>
+            </tr>
+            <tr>
+              <td>Black Coffee Price</td>
+              <td>-</td>
+              <td>{{ cafe.coffee_price }} BDT</td>
+            </tr>
+            <!-- <tr>
+              <td>Map</td>
+              <td>-</td>
+              <td>
+                {{ cafe.map_url }}
+              </td>
+            </tr> -->
+          </table>
+          <!-- <p class="card-text">
+            <small class="text-muted">Last updated 3 mins ago</small>
+          </p> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <a href="{{ url_for('edit_cafe', id=cafe.id) }}"
+      ><button
+        type="button"
+        class="btn btn-outline-dark btn-lg"
+        data-mdb-ripple-init
+        data-mdb-ripple-color="dark"
+      >
+        Edit Cafe Details
+      </button></a
+    >
+  </div>
+</div>
+{% endblock content %}

@@ -52,7 +52,7 @@ with app.app_context():
     db.create_all()
 
 # Forms
-class AddNewCafeForm(FlaskForm):
+class CafeForm(FlaskForm):
     name = StringField("Cafe Name", validators=[DataRequired()])
     short_description = StringField("Short Description")
     map_url = URLField("Map Url", validators=[DataRequired(), URL()])
@@ -68,14 +68,14 @@ class AddNewCafeForm(FlaskForm):
 
 
 @app.route("/")
-def hello_world():
+def home():
     all_cafes = db.session.execute(db.select(Cafe)).scalars().all()
     return render_template("home.html", cafes=all_cafes)
 
 
 @app.route("/add-cafe", methods=["GET", "POST"])
 def add_cafe():
-    form = AddNewCafeForm()
+    form = CafeForm()
     print("Validate on submit:", form.validate_on_submit())
     if form.validate_on_submit():
         new_cafe =  Cafe()
@@ -96,6 +96,32 @@ def add_cafe():
         # print("Form Data:", form.data)
         return redirect("/")
     return render_template("add_cafe.html", form=form)
+
+
+@app.route("/edit-cafe/<int:id>", methods=["GET", "POST"])
+def edit_cafe(id):
+    cafe = db.session.execute(db.select(Cafe).where(Cafe.id == id)).scalar()
+    form = CafeForm()
+    form.name.data = cafe.name
+    form.short_description.data = cafe.short_description
+    form.map_url.data = cafe.map_url
+    form.img_url.data = cafe.img_url
+    form.location.data = cafe.location
+    form.has_sockets.data = cafe.has_sockets
+    form.has_toilet.data = cafe.has_toilet
+    form.has_wifi.data = cafe.has_wifi
+    form.can_take_calls.data = cafe.can_take_calls
+    form.seats.data = cafe.seats
+    form.coffee_price.data = cafe.coffee_price
+    form.submit.label.text = "Update Cafe"
+
+    return render_template("add_cafe.html", form=form, is_edit=True, cafe=cafe)
+
+
+@app.route("/view-cafe/<int:cafe_id>")
+def view_cafe(cafe_id):
+    the_cafe = db.session.execute(db.select(Cafe).where(Cafe.id == cafe_id)).scalar()
+    return render_template("cafe_details.html", cafe=the_cafe)
 
 
 if __name__ == "__main__":

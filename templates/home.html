@@ -24,7 +24,7 @@
     <div class="col">
       <div class="card h-100">
         <img
-          src="https://mdbcdn.b-cdn.net/img/new/standard/city/041.webp"
+          src="{{ cafe.img_url }}"
           class="card-img-top"
           alt="Hollywood Sign on The Hill"
         />
@@ -32,7 +32,10 @@
           <h5 class="card-title">{{ cafe.name }}</h5>
           <p class="card-text">{{ cafe.short_description }}</p>
 
-          <a href="{{ url_for('add_cafe') }}"
+          
+        </div>
+        <div class="card-footer">
+          <a href="{{ url_for('view_cafe', cafe_id=cafe.id) }}"
             ><button
               type="button"
               class="btn btn-outline-dark btn-lg"
@@ -42,6 +45,7 @@
               Details
             </button></a
           >
+          
         </div>
       </div>
     </div>
