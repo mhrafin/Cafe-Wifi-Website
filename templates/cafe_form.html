@@ -13,6 +13,8 @@ field.errors %} {% if request.method == 'POST' %}
       <div class="d-flex justify-content-center align-items-center h-100">
         {% if is_edit %}
         <h1 class="text-black mb-0 display-1">Edit Cafe</h1>
+        {% elif is_req and msg_sent %}
+        <h1 class="text-black mb-0 display-1">Request Successful!</h1>
         {% elif is_req %}
         <h1 class="text-black mb-0 display-1">Request Cafe</h1>
         {% else %}

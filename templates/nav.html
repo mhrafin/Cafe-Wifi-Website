@@ -26,16 +26,26 @@
 
       <ul class="navbar-nav col-lg-9 justify-content-lg-end">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#"
+          <a class="nav-link active" aria-current="page" href="{{ url_for('req_cafe') }}"
             >Request Cafe</a
           >
         </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="#"
-            >Request Cafe</a
+            >Login</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#"
+            >Register</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#"
+            >Logout</a
           >
         </li>
       </ul>

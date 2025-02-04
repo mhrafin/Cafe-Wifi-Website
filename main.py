@@ -1,6 +1,7 @@
 import os
 import secrets
 
+from dotenv import load_dotenv
 from flask import Flask, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -8,13 +9,29 @@ from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from wtforms import (
     BooleanField,
+    EmailField,
     FloatField,
     IntegerField,
+    PasswordField,
     StringField,
     SubmitField,
     URLField,
 )
-from wtforms.validators import URL, DataRequired
+from wtforms.validators import URL, DataRequired, Email
+
+from email_sender import EmailSender
+
+load_dotenv()
+
+# Get env
+my_email = os.getenv("EMAIL")
+my_password = os.getenv("PASSWORD")
+
+# Initialize EmailSender
+email_sender = EmailSender(
+    smtp_host="smtp.gmail.com", sender_email=my_email, sender_password=my_password
+)
+
 
 app = Flask(__name__)
 
@@ -68,8 +85,22 @@ class CafeForm(FlaskForm):
     coffee_price = FloatField("Coffee Price", validators=[DataRequired()])
     submit = SubmitField("Add Cafe")
 
+
 class ReqCafeForm(CafeForm):
     extra_info = StringField("Additional Info")
+
+
+class RegisterForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    email = EmailField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    repeat_password = PasswordField("Repeat Password", validators=[DataRequired()])
+
+
+class LoginForm(FlaskForm):
+    email = EmailField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+
 
 @app.route("/")
 def home():
@@ -143,6 +174,7 @@ def edit_cafe(id):
 @app.route("/req-cafe", methods=["GET", "POST"])
 def req_cafe():
     form = ReqCafeForm()
+    form.submit.label.text = "Request New Cafe / Change"
 
     print("Validate on submit:", form.validate_on_submit())
     if form.validate_on_submit():
@@ -159,8 +191,26 @@ def req_cafe():
         coffee_price = form.data.get("coffee_price")
         extra_info = form.data.get("extra_info")
 
+        email_sender.send_email(
+            recipient_email=my_email,
+            subject="Request for a New Cafe / Update existing Cafe.",
+            email_body=f"""Cafe Name: {name}
+Cafe Description: {short_description}
+Cafe Map URL: {map_url}
+Cafe Img URL: {img_url}
+Cafe Location: {location}
+Cafe has Sockets: {has_sockets}
+Cafe has Toilet: {has_toilet}
+Cafe has Wifi: {has_wifi}
+Cafe Can Take Calls: {can_take_calls}
+Cafe Seats: {seats}
+Cafe Black Coffee Price: {coffee_price}
+Cafe Extra Info: {extra_info}
+""",
+        )
 
-    form.submit.label.text = "Request New Cafe / Change"
+        return render_template("cafe_form.html", form=form, is_req=True, msg_sent=True)
+
     return render_template("cafe_form.html", form=form, is_req=True)
 
 
