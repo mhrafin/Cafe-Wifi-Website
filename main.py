@@ -68,6 +68,8 @@ class CafeForm(FlaskForm):
     coffee_price = FloatField("Coffee Price", validators=[DataRequired()])
     submit = SubmitField("Add Cafe")
 
+class ReqCafeForm(CafeForm):
+    extra_info = StringField("Additional Info")
 
 @app.route("/")
 def home():
@@ -97,7 +99,7 @@ def add_cafe():
         db.session.commit()
         # print("Form Data:", form.data)
         return redirect("/")
-    return render_template("add_cafe.html", form=form)
+    return render_template("cafe_form.html", form=form)
 
 
 @app.route("/edit-cafe/<int:id>", methods=["GET", "POST"])
@@ -135,7 +137,31 @@ def edit_cafe(id):
     form.coffee_price.data = cafe.coffee_price
     form.submit.label.text = "Update Cafe"
 
-    return render_template("add_cafe.html", form=form, is_edit=True, cafe=cafe)
+    return render_template("cafe_form.html", form=form, is_edit=True, cafe=cafe)
+
+
+@app.route("/req-cafe", methods=["GET", "POST"])
+def req_cafe():
+    form = ReqCafeForm()
+
+    print("Validate on submit:", form.validate_on_submit())
+    if form.validate_on_submit():
+        name = form.data.get("name")
+        short_description = form.data.get("short_description")
+        map_url = form.data.get("map_url")
+        img_url = form.data.get("img_url")
+        location = form.data.get("location")
+        has_sockets = form.data.get("has_sockets")
+        has_toilet = form.data.get("has_toilet")
+        has_wifi = form.data.get("has_wifi")
+        can_take_calls = form.data.get("can_take_calls")
+        seats = form.data.get("seats")
+        coffee_price = form.data.get("coffee_price")
+        extra_info = form.data.get("extra_info")
+
+
+    form.submit.label.text = "Request New Cafe / Change"
+    return render_template("cafe_form.html", form=form, is_req=True)
 
 
 @app.route("/view-cafe/<int:cafe_id>")

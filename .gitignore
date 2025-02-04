@@ -3,3 +3,4 @@
 ruff.toml
 __pycache__
 *.db
+.env
