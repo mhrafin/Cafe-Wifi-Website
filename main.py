@@ -2,11 +2,13 @@ import os
 import secrets
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template
+from flask import Flask, flash, redirect, render_template
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from sqlalchemy import Boolean, Float, Integer, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import (
     BooleanField,
     EmailField,
@@ -32,11 +34,20 @@ email_sender = EmailSender(
     smtp_host="smtp.gmail.com", sender_email=my_email, sender_password=my_password
 )
 
-
+# Flask App
 app = Flask(__name__)
-
+# FLask app configs
 app.config["SECRET_KEY"] = secrets.token_hex(16)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+
+# Login Setup
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 
 # SQLAlchemy setup
@@ -64,6 +75,15 @@ class Cafe(db.Model):
     can_take_calls: Mapped[bool] = mapped_column(Boolean, nullable=False)
     seats: Mapped[int] = mapped_column(Integer, nullable=False)
     coffee_price: Mapped[float] = mapped_column(Float, nullable=False)
+
+
+class User(db.Model, UserMixin):
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True, nullable=False
+    )
+    username: Mapped[str] = mapped_column(String, nullable=False)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    password: Mapped[str] = mapped_column(String, nullable=False)
 
 
 with app.app_context():
@@ -95,11 +115,13 @@ class RegisterForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     repeat_password = PasswordField("Repeat Password", validators=[DataRequired()])
+    submit = SubmitField("Register")
 
 
 class LoginForm(FlaskForm):
     email = EmailField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Login")
 
 
 @app.route("/")
@@ -218,6 +240,49 @@ Cafe Extra Info: {extra_info}
 def view_cafe(cafe_id):
     the_cafe = db.session.execute(db.select(Cafe).where(Cafe.id == cafe_id)).scalar()
     return render_template("cafe_details.html", cafe=the_cafe)
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        print(form.data)
+        username = form.data.get("username")
+        email = form.data.get("email")
+        if db.session.execute(db.select(User).where(User.email == email)).scalar():
+            flash("This email already is in use!")
+            return render_template("register.html", form=form)
+        pass1 = form.data.get("password")
+        pass2 = form.data.get("repeat_password")
+        if pass1 == pass2:
+            new_user = User()
+            new_user.username = username
+            new_user.email = email
+            new_user.password = pass1
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            login_user(new_user)
+            flash("login Successful!")
+            return render_template("register.html", form=form)
+        else:
+            flash("Password didn't match!")
+            return render_template("register.html", form=form)
+    return render_template("register.html", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = RegisterForm()
+    return render_template("login.html", form=form)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 if __name__ == "__main__":
