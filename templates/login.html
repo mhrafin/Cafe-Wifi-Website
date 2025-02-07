@@ -7,12 +7,12 @@ for err in field.errors %} {% if request.method == 'POST' %}
   <div
     class="p-5 text-center rounded-3 bg-image"
     style="
-          background-image: url('{{ url_for('static', filename='assets/img/register.jpg')}}');
+          background-image: url('{{ url_for('static', filename='assets/img/login.jpg')}}');
           height: 50vh;"
   >
     <div class="mask" style="background-color: rgba(219, 213, 189, 0.8)">
       <div class="d-flex justify-content-center align-items-center h-100">
-        <h1 class="text-black mb-0 display-1">Register</h1>
+        <h1 class="text-black mb-0 display-1">Login</h1>
       </div>
     </div>
   </div>
@@ -26,13 +26,8 @@ for err in field.errors %} {% if request.method == 'POST' %}
         <p class="flash" style="color: red">{{ message }}</p>
         {% endfor %} {% endif %} {% endwith %}
       </div>
-      <form method="post" , action="{{ url_for('register')}}" novalidate>
+      <form method="post" , action="{{ url_for('login')}}" novalidate>
         {{ form.csrf_token }}
-        <div data-mdb-input-init class="form-outline mb-4">
-          {{ form.username(id="username", class="form-control")}}
-          {{form.username.label(class="form-label", for="name")}} {{
-          show_errors(form.username) }}
-        </div>
 
         <div data-mdb-input-init class="form-outline mb-4">
           {{ form.email(id="email", class="form-control") }} {{
@@ -44,12 +39,6 @@ for err in field.errors %} {% if request.method == 'POST' %}
           {{ form.password(id="password", class="form-control form-control-lg")
           }} {{ form.password.label(class="form-label", for="password") }} {{
           show_errors(form.password) }}
-        </div>
-
-        <div data-mdb-input-init class="form-outline mb-4">
-          {{ form.repeat_password(id="repeat_password", class="form-control
-          form-control-lg") }} {{ form.repeat_password.label(class="form-label",
-          for="password_again") }} {{ show_errors(form.repeat_password) }}
         </div>
 
         {{ form.submit(class="btn btn-outline-dark btn-block")}}

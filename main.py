@@ -1,9 +1,17 @@
 import os
 import secrets
+from functools import wraps
 
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask import Flask, abort, flash, redirect, render_template
+from flask_login import (
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from sqlalchemy import Boolean, Float, Integer, String
@@ -124,6 +132,17 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
+def admin_only(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if current_user.id == 1:
+            return f(*args, **kwargs)
+        else:
+            return abort(403)
+
+    return wrapper
+
+
 @app.route("/")
 def home():
     all_cafes = db.session.execute(db.select(Cafe)).scalars().all()
@@ -131,6 +150,7 @@ def home():
 
 
 @app.route("/add-cafe", methods=["GET", "POST"])
+@admin_only
 def add_cafe():
     form = CafeForm()
     print("Validate on submit:", form.validate_on_submit())
@@ -156,6 +176,7 @@ def add_cafe():
 
 
 @app.route("/edit-cafe/<int:id>", methods=["GET", "POST"])
+@admin_only
 def edit_cafe(id):
     cafe = db.session.execute(db.select(Cafe).where(Cafe.id == id)).scalar()
     form = CafeForm()
@@ -242,6 +263,15 @@ def view_cafe(cafe_id):
     return render_template("cafe_details.html", cafe=the_cafe)
 
 
+@app.route("/delete-cafe/<int:id>")
+@admin_only
+def delete_cafe(id):
+    the_cafe = db.session.execute(db.select(Cafe).where(Cafe.id == id)).scalar()
+    db.session.delete(the_cafe)
+    db.session.commit()
+    return redirect("/")
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
@@ -258,14 +288,16 @@ def register():
             new_user = User()
             new_user.username = username
             new_user.email = email
-            new_user.password = pass1
+            new_user.password = generate_password_hash(
+                password=pass1, method="pbkdf2:sha256:600000", salt_length=8
+            )
 
             db.session.add(new_user)
             db.session.commit()
 
             login_user(new_user)
             flash("login Successful!")
-            return render_template("register.html", form=form)
+            return redirect("/")
         else:
             flash("Password didn't match!")
             return render_template("register.html", form=form)
@@ -274,7 +306,22 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    form = RegisterForm()
+    form = LoginForm()
+    if form.validate_on_submit():
+        print(form.data)
+        email = form.data.get("email")
+        user = db.session.execute(db.select(User).where(User.email == email)).scalar()
+        if user is None:
+            flash("There is no account with this email!")
+            return render_template("login.html", form=form)
+        password = form.data.get("password")
+        if not check_password_hash(pwhash=user.password, password=password):
+            flash("Incorrect Password!")
+            return render_template("login.html", form=form)
+
+        login_user(user)
+        return redirect("/")
+
     return render_template("login.html", form=form)
 
 
