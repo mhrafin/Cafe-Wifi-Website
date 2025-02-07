@@ -41,8 +41,8 @@ A Flask-based web application that lets users browse cafes with Wi-Fi, view deta
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/cafe-wifi-website.git
-   cd cafe-wifi-website
+   git clone https://github.com/mhrafin/Cafe-Wifi-Website.git
+   cd Cafe-Wifi-Website
    ```
 
 2. **Set up a virtual environment:**
